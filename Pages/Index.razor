@@ -1,0 +1,51 @@
+﻿@page "/"
+
+@using Actividad2.evaluador
+@inject EvaluadorPostfija EvaluadorService
+
+<PageTitle>Evaluador de Expresión Postfija</PageTitle>
+
+<h3>Evaluación de Expresión Postfija</h3>
+
+<div style="display: flex; align-items: center; gap: 10px;">
+    <label>Ingrese una expresión Postfija:</label>
+    <input @bind="expresionPostfija" style="padding: 5px; border: 1px solid #ccc; border-radius: 5px;" />
+
+    <button @onclick="Evaluar" style="background-color: deeppink; color: white; border: none; padding: 5px 10px; border-radius: 5px;">
+        Evaluar Expresión
+    </button>
+</div>
+
+<hr />
+
+<h4 style="color: deeppink; display: inline;">Resultado:</h4>
+<p style="font-size: 1.5rem; font-weight: bold; color: black; display: inline; margin-left: 10px;">@resultado</p>
+
+@code {
+    private string expresionPostfija = "";
+    private string resultado = "";
+
+    protected override void OnInitialized()
+    {
+        EvaluadorService.OnOutputChanged += ActualizarResultado;
+    }
+
+    private void Evaluar()
+    {
+        try
+        {
+            EvaluadorService.EvaluarExpresionPostfija(expresionPostfija);
+            resultado = EvaluadorService.Resultado.ToString();
+        }
+        catch (Exception ex)
+        {
+            resultado = "Error: " + ex.Message;
+        }
+    }
+
+    private void ActualizarResultado()
+    {
+        resultado = EvaluadorService.Resultado.ToString();
+        StateHasChanged(); 
+    }
+}
